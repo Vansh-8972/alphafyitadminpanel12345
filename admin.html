@@ -1,0 +1,622 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>AlphaFyit Admin Panel</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    :root{
+      --bg:#050505;
+      --card:#111111;
+      --border:#262626;
+      --text:#f5f5f5;
+      --muted:#a0a0a0;
+      --accent:#ffd700;
+      --danger:#ff5252;
+    }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{
+      font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+      background:#050505;
+      color:var(--text);
+      min-height:100vh;
+    }
+    .topbar{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding:10px 14px;
+      background:#000;
+      border-bottom:1px solid var(--border);
+    }
+    .topbar img{
+      height:40px;
+      width:40px;
+      border-radius:999px;
+      border:1px solid var(--border);
+      object-fit:cover;
+    }
+    .topbar h1{
+      font-size:16px;
+      margin:0;
+    }
+    .topbar span{
+      font-size:11px;
+      color:var(--muted);
+    }
+    .page{
+      max-width:1100px;
+      margin:0 auto;
+      padding:14px;
+    }
+    .kpi-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-bottom:14px;
+    }
+    .kpi{
+      flex:1 1 150px;
+      background:#090909;
+      border-radius:12px;
+      border:1px solid var(--border);
+      padding:8px 10px;
+      font-size:11px;
+    }
+    .kpi-label{
+      color:var(--muted);
+      margin-bottom:4px;
+    }
+    .kpi-value{
+      font-size:18px;
+      font-weight:700;
+      color:var(--accent);
+    }
+
+    .section{
+      margin-top:10px;
+      margin-bottom:16px;
+      padding:10px;
+      border-radius:14px;
+      border:1px solid var(--border);
+      background:#050505;
+    }
+    .section-header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      margin-bottom:6px;
+    }
+    .section-header h2{
+      font-size:14px;
+    }
+    .section-header small{
+      font-size:10px;
+      color:var(--muted);
+    }
+    .field-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin-top:6px;
+    }
+    .field{
+      flex:1 1 150px;
+    }
+    .field label{
+      font-size:11px;
+      color:var(--muted);
+      display:block;
+      margin-bottom:3px;
+    }
+    .field input,
+    .field textarea{
+      width:100%;
+      padding:7px 9px;
+      border-radius:9px;
+      border:1px solid #333;
+      background:#050505;
+      color:var(--text);
+      font-size:12px;
+    }
+    .field textarea{
+      min-height:60px;
+      resize:vertical;
+    }
+    .btn{
+      border:none;
+      outline:none;
+      cursor:pointer;
+      padding:7px 12px;
+      border-radius:999px;
+      font-size:11px;
+      font-weight:600;
+    }
+    .btn-primary{
+      background:linear-gradient(135deg,var(--accent),#ffb300);
+      color:#111;
+    }
+    .btn-danger{
+      background:#2b0000;
+      color:#ff8a80;
+      border:1px solid #4a1414;
+    }
+    .btn-ghost{
+      background:transparent;
+      color:var(--muted);
+      border:1px solid #333;
+    }
+    table{
+      width:100%;
+      border-collapse:collapse;
+      font-size:11px;
+      margin-top:6px;
+    }
+    th,td{
+      padding:6px 5px;
+      border-bottom:1px solid #1b1b1b;
+      text-align:left;
+      vertical-align:top;
+    }
+    th{
+      color:var(--muted);
+      font-weight:500;
+    }
+    tr:nth-child(even){background:#070707;}
+    .pill{
+      display:inline-block;
+      padding:2px 6px;
+      border-radius:999px;
+      font-size:10px;
+      background:rgba(255,215,0,0.06);
+      color:var(--accent);
+    }
+    .muted{color:var(--muted);}
+    .no-data{
+      font-size:11px;
+      color:var(--muted);
+      margin-top:4px;
+    }
+    .small{
+      font-size:10px;
+    }
+
+    @media(max-width:700px){
+      .field-row{
+        flex-direction:column;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="topbar">
+  <img src="https://i.postimg.cc/qvC8JCvB/ezgif-59c21e121f7afdc6.jpg" alt="AlphaFyit Logo">
+  <div>
+    <h1>AlphaFyit Admin Panel</h1>
+    <span>Local admin – same browser ka data only (testing & tracking)</span>
+  </div>
+</div>
+
+<div class="page">
+
+  <!-- KPIs -->
+  <div class="kpi-row">
+    <div class="kpi">
+      <div class="kpi-label">Total orders</div>
+      <div class="kpi-value" id="kpiOrders">0</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Total revenue (₹)</div>
+      <div class="kpi-value" id="kpiRevenue">₹0</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Total promoters</div>
+      <div class="kpi-value" id="kpiPromoters">0</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Total products</div>
+      <div class="kpi-value" id="kpiProducts">0</div>
+    </div>
+  </div>
+
+  <!-- PRODUCTS -->
+  <section class="section">
+    <div class="section-header">
+      <h2>Products</h2>
+      <small>Local list only – front-end testing ke liye</small>
+    </div>
+
+    <div class="field-row">
+      <div class="field">
+        <label>Title</label>
+        <input id="prodTitle" type="text" placeholder="AlphaFyit Premium Guide">
+      </div>
+      <div class="field">
+        <label>Price (₹)</label>
+        <input id="prodPrice" type="number" value="179">
+      </div>
+      <div class="field">
+        <label>Image URL</label>
+        <input id="prodImage" type="text" placeholder="https://...">
+      </div>
+    </div>
+    <div class="field" style="margin-top:6px;">
+      <label>Description</label>
+      <textarea id="prodDesc" placeholder="Full body workout + diet guide for beginners."></textarea>
+    </div>
+    <button class="btn btn-primary" style="margin-top:8px;" onclick="addProduct()">Add product</button>
+
+    <div id="productsWrap" style="margin-top:8px;"></div>
+  </section>
+
+  <!-- MANUAL ORDER ENTRY -->
+  <section class="section">
+    <div class="section-header">
+      <h2>Manual order entry</h2>
+      <small>Use when payment confirmed (screenshot / Razorpay dashboard)</small>
+    </div>
+
+    <div class="field-row">
+      <div class="field">
+        <label>Buyer name</label>
+        <input id="mName" type="text" placeholder="Customer name">
+      </div>
+      <div class="field">
+        <label>Phone / WhatsApp</label>
+        <input id="mPhone" type="tel" placeholder="10 digit number">
+      </div>
+      <div class="field">
+        <label>Email (optional)</label>
+        <input id="mEmail" type="email" placeholder="customer@example.com">
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label>Promoter code (optional)</label>
+        <input id="mPromo" type="text" placeholder="PROMO01">
+      </div>
+      <div class="field">
+        <label>Amount (₹)</label>
+        <input id="mAmount" type="number" value="179">
+      </div>
+      <div class="field">
+        <label>Product name</label>
+        <input id="mProduct" type="text" placeholder="AlphaFyit Premium Guide">
+      </div>
+    </div>
+
+    <button class="btn btn-primary" style="margin-top:8px;" onclick="addManualOrder()">
+      Save manual order
+    </button>
+    <div class="small" style="margin-top:4px;color:var(--muted);">
+      Note: User form se jo data aata hai wo “user-form” source ke naam se niche Orders table me show hoga.
+    </div>
+  </section>
+
+  <!-- ORDERS TABLE (User form + Manual) -->
+  <section class="section">
+    <div class="section-header">
+      <h2>Orders (user + manual)</h2>
+      <small>alphafyit_leads + alphafyit_manual_orders (localStorage)</small>
+    </div>
+    <div id="ordersWrap"></div>
+  </section>
+
+  <!-- PROMOTERS TABLE -->
+  <section class="section">
+    <div class="section-header">
+      <h2>Promoters</h2>
+      <small>From Become Promoter form (alphafyit_promoters)</small>
+    </div>
+    <div id="promotersWrap"></div>
+  </section>
+
+</div>
+
+<script>
+  // KEYS – same as index.html
+  const LEADS_KEY        = "alphafyit_leads";            // from buy form
+  const MANUAL_ORDERS_KEY= "alphafyit_manual_orders";    // from admin manual entry
+  const PROMOTER_KEY     = "alphafyit_promoters";        // from promoter modal
+  const PRODUCTS_KEY     = "alphafyit_products";         // local products
+
+  // Utility
+  function safeParse(key){
+    try{
+      return JSON.parse(localStorage.getItem(key) || "[]");
+    }catch(e){
+      return [];
+    }
+  }
+  function saveKey(key, value){
+    localStorage.setItem(key, JSON.stringify(value));
+  }
+
+  // PRODUCTS
+  function addProduct(){
+    const title = document.getElementById('prodTitle').value.trim();
+    const price = Number(document.getElementById('prodPrice').value || 0);
+    const image = document.getElementById('prodImage').value.trim();
+    const desc  = document.getElementById('prodDesc').value.trim();
+
+    if(!title || !price){
+      alert("Title and price are required.");
+      return;
+    }
+    const list = safeParse(PRODUCTS_KEY);
+    list.push({
+      id: Date.now(),
+      title,
+      price,
+      image,
+      desc
+    });
+    saveKey(PRODUCTS_KEY, list);
+
+    document.getElementById('prodTitle').value = "";
+    document.getElementById('prodImage').value = "";
+    document.getElementById('prodDesc').value  = "";
+    document.getElementById('prodPrice').value = "179";
+
+    loadProducts();
+    loadStats();
+  }
+
+  function deleteProduct(id){
+    if(!confirm("Delete this product?")) return;
+    let list = safeParse(PRODUCTS_KEY);
+    list = list.filter(p => p.id !== id);
+    saveKey(PRODUCTS_KEY, list);
+    loadProducts();
+    loadStats();
+  }
+
+  function loadProducts(){
+    const wrap = document.getElementById('productsWrap');
+    const list = safeParse(PRODUCTS_KEY);
+    if(!list.length){
+      wrap.innerHTML = '<div class="no-data">No products added yet.</div>';
+      return;
+    }
+    const rows = list.map(p => `
+      <tr>
+        <td>${p.title || "-"}</td>
+        <td>₹${p.price || 0}</td>
+        <td class="muted">
+          ${p.image ? `<a href="${p.image}" target="_blank">View image</a>` : "-"}
+        </td>
+        <td class="muted">${p.desc || "-"}</td>
+        <td><button class="btn btn-danger" onclick="deleteProduct(${p.id})">Delete</button></td>
+      </tr>
+    `).join("");
+
+    wrap.innerHTML = `
+      <div style="overflow-x:auto;">
+        <table>
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Price</th>
+              <th>Image</th>
+              <th>Description</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>
+    `;
+  }
+
+  // MANUAL ORDERS
+  function addManualOrder(){
+    const name    = document.getElementById('mName').value.trim();
+    const phone   = document.getElementById('mPhone').value.trim();
+    const email   = document.getElementById('mEmail').value.trim();
+    const promo   = document.getElementById('mPromo').value.trim();
+    const amount  = Number(document.getElementById('mAmount').value || 0);
+    const product = document.getElementById('mProduct').value.trim() || "AlphaFyit Guide";
+
+    if(!name || !phone || !amount){
+      alert("Name, phone and amount are required.");
+      return;
+    }
+
+    const list = safeParse(MANUAL_ORDERS_KEY);
+    list.push({
+      id: Date.now(),
+      name,
+      phone,
+      email,
+      promo,
+      amount,
+      product,
+      source: "manual",
+      time: new Date().toISOString()
+    });
+    saveKey(MANUAL_ORDERS_KEY, list);
+
+    document.getElementById('mName').value = "";
+    document.getElementById('mPhone').value = "";
+    document.getElementById('mEmail').value = "";
+    document.getElementById('mPromo').value = "";
+    document.getElementById('mAmount').value = "179";
+    document.getElementById('mProduct').value = "";
+
+    loadOrders();
+    loadStats();
+  }
+
+  function deleteOrder(type, index){
+    if(!confirm("Delete this order?")) return;
+    if(type === "user"){
+      let leads = safeParse(LEADS_KEY);
+      leads.splice(index,1);
+      saveKey(LEADS_KEY, leads);
+    }else{
+      let manual = safeParse(MANUAL_ORDERS_KEY);
+      manual.splice(index,1);
+      saveKey(MANUAL_ORDERS_KEY, manual);
+    }
+    loadOrders();
+    loadStats();
+  }
+
+  // LOAD ORDERS (USER + MANUAL)
+  function loadOrders(){
+    const wrap = document.getElementById('ordersWrap');
+    const leads  = safeParse(LEADS_KEY);          // from buy form
+    const manual = safeParse(MANUAL_ORDERS_KEY);  // from admin
+
+    if(!leads.length && !manual.length){
+      wrap.innerHTML = '<div class="no-data">No orders yet in this browser.</div>';
+      return;
+    }
+
+    // Map leads as orders with fixed amount 179 and source user-form
+    const leadRows = leads.map((o,idx) => ({
+      type: "user",
+      index: idx,
+      name: o.name || "-",
+      email: o.email || "-",
+      phone: o.phone || "-",
+      promo: o.promo || "-",
+      amount: 179,
+      product: "AlphaFyit Premium Guide",
+      source: "user-form",
+      time: o.time || null
+    }));
+
+    const manualRows = manual.map((o,idx) => ({
+      type: "manual",
+      index: idx,
+      name: o.name || "-",
+      email: o.email || "-",
+      phone: o.phone || "-",
+      promo: o.promo || "-",
+      amount: o.amount || 0,
+      product: o.product || "AlphaFyit Premium Guide",
+      source: "manual",
+      time: o.time || null
+    }));
+
+    const all = [...leadRows, ...manualRows].sort((a,b)=>{
+      const ta = a.time ? Date.parse(a.time) : 0;
+      const tb = b.time ? Date.parse(b.time) : 0;
+      return tb - ta;
+    });
+
+    const rowsHtml = all.map(o => `
+      <tr>
+        <td>${o.name}</td>
+        <td>${o.phone}</td>
+        <td class="muted">${o.email}</td>
+        <td>${o.promo || "-"}</td>
+        <td>${o.product}</td>
+        <td>₹${o.amount}</td>
+        <td><span class="pill">${o.source}</span></td>
+        <td class="muted">${o.time ? new Date(o.time).toLocaleString() : "-"}</td>
+        <td><button class="btn btn-danger" onclick="deleteOrder('${o.type}', ${o.index})">Delete</button></td>
+      </tr>
+    `).join("");
+
+    wrap.innerHTML = `
+      <div style="overflow-x:auto;">
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Phone</th>
+              <th>Email</th>
+              <th>Promoter</th>
+              <th>Product</th>
+              <th>Amount</th>
+              <th>Source</th>
+              <th>Time</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>${rowsHtml}</tbody>
+        </table>
+      </div>
+    `;
+  }
+
+  // PROMOTERS
+  function loadPromoters(){
+    const wrap = document.getElementById('promotersWrap');
+    const list = safeParse(PROMOTER_KEY);
+    if(!list.length){
+      wrap.innerHTML = '<div class="no-data">No promoters registered yet in this browser.</div>';
+      document.getElementById('kpiPromoters').textContent = "0";
+      return;
+    }
+
+    const rows = list.map((p,idx)=>`
+      <tr>
+        <td>${p.name || "-"}</td>
+        <td>${p.phone || "-"}</td>
+        <td class="muted">${p.email || "-"}</td>
+        <td class="muted">${p.upi || "-"}</td>
+        <td><span class="pill">${p.code || "-"}</span></td>
+        <td class="muted">${p.joinedAt ? new Date(p.joinedAt).toLocaleString() : "-"}</td>
+        <td><button class="btn btn-danger" onclick="deletePromoter(${idx})">Delete</button></td>
+      </tr>
+    `).join("");
+
+    wrap.innerHTML = `
+      <div style="overflow-x:auto;">
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Phone</th>
+              <th>Email</th>
+              <th>UPI</th>
+              <th>Code</th>
+              <th>Joined</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>
+    `;
+
+    document.getElementById('kpiPromoters').textContent = list.length;
+  }
+
+  function deletePromoter(index){
+    if(!confirm("Delete this promoter?")) return;
+    let list = safeParse(PROMOTER_KEY);
+    list.splice(index,1);
+    saveKey(PROMOTER_KEY, list);
+    loadPromoters();
+  }
+
+  // STATS
+  function loadStats(){
+    const leads   = safeParse(LEADS_KEY);
+    const manual  = safeParse(MANUAL_ORDERS_KEY);
+    const products= safeParse(PRODUCTS_KEY);
+    const promot  = safeParse(PROMOTER_KEY);
+
+    const ordersCount = leads.length + manual.length;
+    const revenue = (leads.length * 179) + manual.reduce((sum,o)=>sum+(o.amount||0),0);
+
+    document.getElementById('kpiOrders').textContent   = ordersCount;
+    document.getElementById('kpiRevenue').textContent  = "₹" + revenue;
+    document.getElementById('kpiProducts').textContent = products.length;
+    document.getElementById('kpiPromoters').textContent= promot.length;
+  }
+
+  // INITIAL LOAD
+  loadProducts();
+  loadOrders();
+  loadPromoters();
+  loadStats();
+</script>
+
+</body>
+</html>
